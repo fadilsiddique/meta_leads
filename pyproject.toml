@@ -3,7 +3,7 @@ name = "meta_leads"
 authors = [
     { name = "Upscape Technologies", email = "info@upscapetech.com"}
 ]
-description = "Integrate Meta leadgen api to erpnext"
+description = "Integrate meta leadgen api to erpnext"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]

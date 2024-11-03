@@ -1,6 +1,6 @@
 ## Meta Leads
 
-Integrate Meta leadgen api to erpnext
+Integrate meta leadgen api to erpnext
 
 #### License
 

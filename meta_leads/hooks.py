@@ -1,7 +1,7 @@
 app_name = "meta_leads"
 app_title = "Meta Leads"
 app_publisher = "Upscape Technologies"
-app_description = "Integrate Meta leadgen api to erpnext"
+app_description = "Integrate meta leadgen api to erpnext"
 app_email = "info@upscapetech.com"
 app_license = "mit"
 # required_apps = []
