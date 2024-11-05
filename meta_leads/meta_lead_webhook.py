@@ -21,8 +21,9 @@ def handle_meta_lead():
         frappe.response["type"] = "text/plain"
         frappe.response["status"] = 200
         return params["hub.challenge"]
+    return params["hub.challenge"]
 
-    return "Webhook received"
+    # return "Webhook received"
 
 # @frappe.whitelist(allow_guest=True)
 # def handle_meta_lead():
