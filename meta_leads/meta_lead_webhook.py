@@ -21,9 +21,23 @@ def handle_meta_lead():
         frappe.response["type"] = "text/plain"
         frappe.response["status"] = 200
         return params["hub.challenge"]
-    return params["hub.challenge"]
+    
+    # return params["hub.challenge"]
 
     # return "Webhook received"
+
+@frappe.whitelist(allow_guest=True)
+def test_handle_meta_lead():
+    params = frappe.local.form_dict
+
+    if "hub.challenge" in params and params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
+        frappe.response["type"] = "text/plain"
+        frappe.response["status"] = 200
+        return params["hub.challenge"]
+    
+    # return params["hub.challenge"]
+
+    return "Webhook received"
 
 # @frappe.whitelist(allow_guest=True)
 # def handle_meta_lead():
