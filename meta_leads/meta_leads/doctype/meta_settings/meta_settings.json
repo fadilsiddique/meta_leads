@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-03 14:51:44.722486",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "access_token",
+  "url",
+  "version",
+  "app_id",
+  "app_secret",
+  "webhook_settings_section",
+  "hub_mode",
+  "hub_challange",
+  "hub_verify_token"
+ ],
+ "fields": [
+  {
+   "fieldname": "access_token",
+   "fieldtype": "Password",
+   "label": "Access Token"
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "label": "URL"
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Version"
+  },
+  {
+   "fieldname": "app_id",
+   "fieldtype": "Data",
+   "label": "App ID"
+  },
+  {
+   "fieldname": "app_secret",
+   "fieldtype": "Password",
+   "label": "App Secret"
+  },
+  {
+   "fieldname": "webhook_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Webhook Settings"
+  },
+  {
+   "fieldname": "hub_mode",
+   "fieldtype": "Data",
+   "label": "Hub Mode"
+  },
+  {
+   "fieldname": "hub_challange",
+   "fieldtype": "Data",
+   "label": "Hub Challange"
+  },
+  {
+   "fieldname": "hub_verify_token",
+   "fieldtype": "Data",
+   "label": "Hub Verify Token"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-11-05 11:03:18.127396",
+ "modified_by": "Administrator",
+ "module": "Meta Leads",
+ "name": "Meta Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
