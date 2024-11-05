@@ -58,14 +58,14 @@
   },
   {
    "fieldname": "hub_verify_token",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "label": "Hub Verify Token"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-05 11:03:18.127396",
+ "modified": "2024-11-05 18:28:50.539772",
  "modified_by": "Administrator",
  "module": "Meta Leads",
  "name": "Meta Settings",

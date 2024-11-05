@@ -28,6 +28,7 @@ def handle_meta_lead():
     # Step 1: Handle verification challenge
     if "hub.challenge" in params:
         if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:  # Replace with your verification token
+            frappe.response["type"] = "text/plain"
             return params["hub.challenge"]
         else:
             frappe.throw(_("Invalid verification token"), frappe.PermissionError)
