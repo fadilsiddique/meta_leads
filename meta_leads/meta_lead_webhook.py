@@ -21,7 +21,7 @@ def test_handle_meta_lead():
 
     try:
         # Log the user executing the function
-        frappe.log_error(frappe.get_traceback(), f"1 {data}")
+        frappe.log_error(frappe.get_traceback(), f"1 {params}")
 
         # Handle verification challenge
         if "hub.challenge" in params:
@@ -29,20 +29,20 @@ def test_handle_meta_lead():
                 frappe.log_error(frappe.get_traceback(), f"2 {data}")
 
                 # Attempt to create a Note and log it
-                log_request = frappe.get_doc({
-                    "doctype": "Note",
-                    "title": "Meta Webhook Request",
-                    "content": "Webhook test note",
-                    "public":1
-                })
-                log_request.insert(ignore_permissions=True)
-                frappe.db.commit()
-
-                frappe.log_error(frappe.get_traceback(), f"3 {data}")
                 return Response(params["hub.challenge"], mimetype="text/plain", status=200)
+        log_request = frappe.get_doc({
+            "doctype": "Note",
+            "title": "Meta Webhook Request",
+            "content": "Webhook test note",
+            "public":1
+        })
+        log_request.insert(ignore_permissions=True)
+        frappe.db.commit()
+
+        frappe.log_error(frappe.get_traceback(), f"3 {data}")
             
 
-        frappe.log_error(frappe.get_traceback(), f"4 {data}")
+        frappe.log_error(frappe.get_traceback(), f"4 {params}")
     except Exception as e:
         # Log any error that occurs in Error Log doctype
         frappe.log_error(frappe.get_traceback(), f"5 {data}") 
