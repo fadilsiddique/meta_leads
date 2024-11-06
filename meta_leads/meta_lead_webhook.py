@@ -22,10 +22,19 @@ def test_handle_meta_lead():
     params = frappe.local.form_dict
     request_data = frappe.request.data
 
+
     # Handle verification challenge
     if "hub.challenge" in params:
         if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
             return Response(params["hub.challenge"], mimetype="text/plain", status=200)
+    
+    log_request = frappe.get_doc({
+        "doctype": "Note",
+        "title": "Meta Webhook Request",
+        "content": request_data,
+    })
+    log_request.insert(ignore_permissions=True)
+    frappe.db.commit()
 
     # Validate the signature
     signature = frappe.get_request_header("X-Hub-Signature-256")
