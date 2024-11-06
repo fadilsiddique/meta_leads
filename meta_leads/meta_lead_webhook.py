@@ -16,15 +16,17 @@ ACCESS_TOKEN = meta_settings.get_password("access_token")
 def test_handle_meta_lead():
     params = frappe.local.form_dict
     request_data = frappe.request.data
+    decoded_data = request_data.decode("utf-8")
+    data = json.loads(decoded_data)
 
     try:
         # Log the user executing the function
-        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+        frappe.log_error(e, f"1 {data}")
 
         # Handle verification challenge
         if "hub.challenge" in params:
             if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
-                frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+                frappe.log_error(e, f"2 {data}")
 
                 # Attempt to create a Note and log it
                 log_request = frappe.get_doc({
@@ -36,13 +38,13 @@ def test_handle_meta_lead():
                 log_request.insert(ignore_permissions=True)
                 frappe.db.commit()
 
-                frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+                frappe.log_error(e, f"3 {data}")
                 return Response(params["hub.challenge"], mimetype="text/plain", status=200)
 
-        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+        frappe.log_error(e, f"4 {data}")
     except Exception as e:
         # Log any error that occurs in Error Log doctype
-        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")  
+        frappe.log_error(e, f"5 {data}") 
 
     # Validate the signature
     # signature = frappe.get_request_header("X-Hub-Signature-256")
