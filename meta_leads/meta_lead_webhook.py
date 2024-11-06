@@ -28,24 +28,22 @@ def test_handle_meta_lead():
 
 
         if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
+            try:
+                # Attempt to create a Note document and log it
+                log_request = frappe.get_doc({
+                    "doctype": "Note",
+                    "title": "Meta Webhook Request Test",
+                    "content": "hello"
+                })
+                log_request.insert(ignore_permissions=True)
+                frappe.db.commit()
+                frappe.logger().info("Note created successfully: {}".format(log_request.name))
+            except Exception as e:
+                # Log error to the Error Log doctype with a specific title
+                frappe.log_error(message=str(e), title="Meta Webhook Note Creation Error")
 
             return Response(params["hub.challenge"], mimetype="text/plain", status=200)
     
-        try:
-            # Attempt to create a Note document and log it
-            log_request = frappe.get_doc({
-                "doctype": "Note",
-                "title": "Meta Webhook Request Test",
-                "content": "hello"
-            })
-            log_request.insert(ignore_permissions=True)
-            frappe.db.commit()
-            frappe.logger().info("Note created successfully: {}".format(log_request.name))
-        except Exception as e:
-            # Log error to the Error Log doctype with a specific title
-            frappe.log_error(message=str(e), title="Meta Webhook Note Creation Error")
-    
-
 
     # Validate the signature
     # signature = frappe.get_request_header("X-Hub-Signature-256")
