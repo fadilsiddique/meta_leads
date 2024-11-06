@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import json
 from frappe import _
+from werkzeug.wrappers import Response
 
 meta_settings = frappe.get_single("Meta Settings")
 
@@ -13,29 +14,39 @@ VERSION = meta_settings.get("version")
 ACCESS_TOKEN = meta_settings.get_password("access_token")
 
 
+# @frappe.whitelist(allow_guest=True)
+# def handle_meta_lead():
+#     params = frappe.local.form_dict
+
+#     if "hub.challenge" in params and params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
+#         frappe.response["type"] = "text/plain"
+#         frappe.response["status"] = 200
+#         return params["hub.challenge"]
+    
+
+#     return "Webhook received"
+
 @frappe.whitelist(allow_guest=True)
 def handle_meta_lead():
     params = frappe.local.form_dict
 
+    # Check for verification request
     if "hub.challenge" in params and params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
-        frappe.response["type"] = "text/plain"
-        frappe.response["status"] = 200
+        # Set plain text response and return the challenge directly
+        frappe.local.response["type"] = "text/plain"
+        frappe.local.response["status"] = 200
         return params["hub.challenge"]
-    
-    # return params["hub.challenge"]
 
-    # return "Webhook received"
+    # If this is not a verification request, return a generic response
+    return "Webhook received"
 
 @frappe.whitelist(allow_guest=True)
 def test_handle_meta_lead():
     params = frappe.local.form_dict
 
     if "hub.challenge" in params and params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
-        frappe.response["type"] = "text/plain"
-        frappe.response["status"] = 200
-        return params["hub.challenge"]
-    
-    # return params["hub.challenge"]
+        # Return plain text response using Response object for precision
+        return Response(params["hub.challenge"], mimetype='text/plain', status=200)
 
     return "Webhook received"
 
