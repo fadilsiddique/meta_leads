@@ -40,6 +40,7 @@ def test_handle_meta_lead():
 
                 frappe.log_error(frappe.get_traceback(), f"3 {data}")
                 return Response(params["hub.challenge"], mimetype="text/plain", status=200)
+            
 
         frappe.log_error(frappe.get_traceback(), f"4 {data}")
     except Exception as e:
