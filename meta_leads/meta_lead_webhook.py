@@ -14,36 +14,35 @@ ACCESS_TOKEN = meta_settings.get_password("access_token")
 
 @frappe.whitelist(allow_guest=True)
 def test_handle_meta_lead():
-    """
-    Main webhook handler for Meta Lead Ads. Handles verification requests,
-    validates signature, processes lead data, and creates ERPNext Lead entries.
-    """
-    # Parse request data and parameters
     params = frappe.local.form_dict
     request_data = frappe.request.data
 
+    try:
+        # Log the user executing the function
+        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
 
-    # Handle verification challenge
-    if "hub.challenge" in params:
+        # Handle verification challenge
+        if "hub.challenge" in params:
+            if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
+                frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
 
-
-        if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
-            try:
-                # Attempt to create a Note document and log it
+                # Attempt to create a Note and log it
                 log_request = frappe.get_doc({
                     "doctype": "Note",
-                    "title": "Meta Webhook Request Test",
-                    "content": "hello"
+                    "title": "Meta Webhook Request",
+                    "content": "Webhook test note",
+                    "public":1
                 })
                 log_request.insert(ignore_permissions=True)
                 frappe.db.commit()
-                frappe.logger().info("Note created successfully: {}".format(log_request.name))
-            except Exception as e:
-                # Log error to the Error Log doctype with a specific title
-                frappe.log_error(message=str(e), title="Meta Webhook Note Creation Error")
 
-            return Response(params["hub.challenge"], mimetype="text/plain", status=200)
-    
+                frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+                return Response(params["hub.challenge"], mimetype="text/plain", status=200)
+
+        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")
+    except Exception as e:
+        # Log any error that occurs in Error Log doctype
+        frappe.log_error(frappe.get_traceback(), f"Error while creating address for {request_data}")  
 
     # Validate the signature
     # signature = frappe.get_request_header("X-Hub-Signature-256")
