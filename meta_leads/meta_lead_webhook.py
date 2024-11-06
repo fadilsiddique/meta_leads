@@ -25,21 +25,22 @@ def test_handle_meta_lead():
 
     # Handle verification challenge
     if "hub.challenge" in params:
+        log_request = frappe.get_doc({
+            "doctype": "Note",
+            "title": "Meta Webhook Request",
+            "content": request_data + "hello"
+        })
+        log_request.insert(ignore_permissions=True)
+        frappe.db.commit()
         if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
             return Response(params["hub.challenge"], mimetype="text/plain", status=200)
     
-    log_request = frappe.get_doc({
-        "doctype": "Note",
-        "title": "Meta Webhook Request",
-        "content": request_data,
-    })
-    log_request.insert(ignore_permissions=True)
-    frappe.db.commit()
+
 
     # Validate the signature
     signature = frappe.get_request_header("X-Hub-Signature-256")
     if not verify_signature(request_data, signature):
-        frappe.throw(_("Invalid signature"), frappe.PermissionError)
+        frappe.throw("Invalid signature")
 
     # Process lead data
     data = json.loads(request_data)
