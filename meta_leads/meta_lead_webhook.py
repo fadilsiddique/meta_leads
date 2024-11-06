@@ -25,18 +25,12 @@ def test_handle_meta_lead():
 
     # Handle verification challenge
     if "hub.challenge" in params:
-        log_request = frappe.get_doc({
-            "doctype": "Note",
-            "title": "Meta Webhook Request",
-            "content": request_data + "hello"
-        })
-        log_request.insert(ignore_permissions=True)
-        frappe.db.commit()
+
         if params.get("hub.verify_token") == WEBHOOK_VERIFY_TOKEN:
             log_request = frappe.get_doc({
                 "doctype": "Note",
                 "title": "Meta Webhook Request",
-                "content": request_data + "hello"
+                "content": "hello"
             })
             log_request.insert(ignore_permissions=True)
             frappe.db.commit()
