@@ -102,22 +102,22 @@ def process_lead(lead_id, form_id):
     """
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
+    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
+    frappe.log_error(f"12 Lead URL: {lead_url}", "Meta Lead URL")
+
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
-    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
-    frappe.log_error(frappe.get_traceback(), f"12 {lead_url} {requests.get(lead_url, headers=headers,timeout=10)}")
-
-
-    response = requests.get(lead_url, headers=headers,timeout=10)
-
-    frappe.log_error(frappe.get_traceback(), f"109 {response}")
-    frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
-
+    
     try:
+        # Attempt to make the request
         response = requests.get(lead_url, headers=headers, timeout=10)
-        frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
+        
+        # Log the response status and content for debugging
+        frappe.log_error(f"Response Status: {response.status_code}", "Meta Lead API Response Status")
+        frappe.log_error(f"Response Content: {response.text}", "Meta Lead API Response Content")
 
+        # Check if the response is successful and parse JSON
         if response.status_code == 200:
             try:
                 lead_data = response.json()
@@ -126,7 +126,7 @@ def process_lead(lead_id, form_id):
                 frappe.log_error(f"Failed to parse JSON response: {e}", "Meta Lead JSON Error")
                 return
 
-            # Extract field data
+            # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
             frappe.log_error(f"Field Data Extracted: {field_data}", "Meta Lead Field Data Parsing")
 
@@ -155,7 +155,10 @@ def process_lead(lead_id, form_id):
             else:
                 frappe.log_error(f"Insufficient lead data: {field_data}", "Meta Lead Data Validation Error")
         else:
-            frappe.log_error(f"Unexpected status code: {response.status_code}", "Meta Lead API Error")
+            # Log any unexpected status code
+            frappe.log_error(f"Unexpected status code: {response.status_code}, Response: {response.text}", "Meta Lead API Error")
 
     except requests.exceptions.RequestException as e:
+        # Log network or connection errors specifically
         frappe.log_error(f"Request failed: {e}", "Meta Lead RequestException")
+
