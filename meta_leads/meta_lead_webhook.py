@@ -94,7 +94,7 @@ def verify_signature(payload, signature):
             msg=msg,
             digestmod=hashlib.sha256
         ).hexdigest()
-        frappe.log_error(frappe.get_traceback(), f"10 {payload}")
+        frappe.log_error(frappe.get_traceback(), f"10 {expected_signature} {signature}")
         return hmac.compare_digest(expected_signature, signature)
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), f"11 {e}")
