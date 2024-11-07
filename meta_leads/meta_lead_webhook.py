@@ -108,7 +108,7 @@ def process_lead(lead_id, form_id):
     try:
         # Fetch lead data from Meta
         response = requests.get(lead_url)
-        frappe.log_error(frappe.get_traceback(), f"12 {response}")
+        frappe.log_error(frappe.get_traceback(), f"1200 {response}")
         lead_data = response.json()
 
         # Parse lead information
