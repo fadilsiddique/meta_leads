@@ -52,7 +52,7 @@ def test_handle_meta_lead():
     frappe.log_error(frappe.get_traceback(), f"6 {signature}")
 
         
-    if verify_signature(data, signature):
+    if verify_signature(request_data, signature):
         frappe.log_error(frappe.get_traceback(), f"60 {signature} {data}")
     # Process lead data
         if data.get("object") == "page":
@@ -83,7 +83,7 @@ def verify_signature(payload, signature):
     try:
         key = META_APP_SECRET.encode("utf-8") if isinstance(META_APP_SECRET, str) else META_APP_SECRET
 
-        msg = payload if isinstance(payload, bytes) else payload.encode("utf-8")
+        msg = payload
 
 
         expected_signature = "sha256=" + hmac.new(
