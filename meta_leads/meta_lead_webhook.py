@@ -104,34 +104,41 @@ def process_lead(lead_id, form_id):
     """
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
     frappe.log_error(frappe.get_traceback(), f"12 {lead_url}")
+    response = requests.get(lead_url)
 
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+    }
+    frappe.log_error(frappe.get_traceback(), f"109 {response}")
     try:
         # Fetch lead data from Meta
-        response = requests.get(lead_url)
+        response = requests.get(lead_url, headers=headers,timeout=10)
         frappe.log_error(frappe.get_traceback(), f"1200 {response}")
-        lead_data = response.json()
+        if response.status_code == 200:
+            frappe.log_error(frappe.get_traceback(), f"14 {response} {response.status_code}")
+            lead_data = response.json()
 
         # Parse lead information
-        field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-        lead_name = field_data.get("full_name")
-        lead_company = field_data.get("company_name")
-        lead_phone = field_data.get("phone_number")
-        frappe.log_error(frappe.get_traceback(), f"18 {field_data}")
+            field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
+            lead_name = field_data.get("full_name")
+            lead_company = field_data.get("company_name")
+            lead_phone = field_data.get("phone_number")
+            frappe.log_error(frappe.get_traceback(), f"18 {field_data}")
 
-        # Insert the lead into ERPNext CRM if necessary data is available
-        if lead_name and lead_company:
-            lead_doc = frappe.get_doc({
-                "doctype": "CRM Lead",
-                "first_name": lead_name,
-                "middle_name": lead_company,
-                "phone": lead_phone,
-                "source": "Campaign",
-            })
-            lead_doc.insert(ignore_permissions=True)
-            frappe.db.commit()
-            frappe.log_error(frappe.get_traceback(), f"13 {lead_doc}")
-        else:
-            frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
+            # Insert the lead into ERPNext CRM if necessary data is available
+            if lead_name and lead_company:
+                lead_doc = frappe.get_doc({
+                    "doctype": "CRM Lead",
+                    "first_name": lead_name,
+                    "middle_name": lead_company,
+                    "phone": lead_phone,
+                    "source": "Campaign",
+                })
+                lead_doc.insert(ignore_permissions=True)
+                frappe.db.commit()
+                frappe.log_error(frappe.get_traceback(), f"13 {lead_doc}")
+            else:
+                frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
 
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         frappe.log_error(frappe.get_traceback(), f"15 {e}")
