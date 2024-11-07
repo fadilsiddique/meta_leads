@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import json
 from werkzeug.wrappers import Response
+import requests
 
 # Fetch configurations from "Meta Settings" doctype
 meta_settings = frappe.get_single("Meta Settings")
@@ -106,7 +107,8 @@ def process_lead(lead_id, form_id):
 
     try:
         # Fetch lead data from Meta
-        response = frappe.session.get(lead_url)
+        response = requests.get(lead_url)
+        frappe.log_error(frappe.get_traceback(), f"12 {response}")
         lead_data = response.json()
 
         # Parse lead information
@@ -132,4 +134,4 @@ def process_lead(lead_id, form_id):
             frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
 
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), f"15")
+        frappe.log_error(frappe.get_traceback(), f"15 {e}")
