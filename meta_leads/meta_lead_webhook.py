@@ -104,10 +104,12 @@ def process_lead(lead_id, form_id):
     """
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
     frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
+    payload ={}
+    headers = {}
     
     try:
         # Attempt to make the request
-        response = requests.get(lead_url)
+        response = requests.request("GET", lead_url, headers=headers, data=payload)
         
         # Log the response status and content for debugging
         frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
