@@ -50,24 +50,29 @@ def test_handle_meta_lead():
     # Validate the signature
     signature = frappe.get_request_header("X-Hub-Signature-256")
     frappe.log_error(frappe.get_traceback(), f"6 {signature}")
-    if not verify_signature(request_data, signature):
-        frappe.log_error(frappe.get_traceback(), f"7 {signature}")
-        
 
+        
+    if verify_signature(data, signature):
+        frappe.log_error(frappe.get_traceback(), f"60 {signature} {data}")
     # Process lead data
-    data = json.loads(request_data)
-    if data.get("object") == "page":
-        frappe.log_error(frappe.get_traceback(), f"8 {data.get('object')}")
-        for entry in data.get("entry", []):
-            for change in entry.get("changes", []):
-                if change.get("field") == "leadgen":
-                    lead_id = change["value"]["leadgen_id"]
-                    form_id = change["value"]["form_id"]
-                    process_lead(lead_id, form_id)
+        if data.get("object") == "page":
+            frappe.log_error(frappe.get_traceback(), f"8 {data.get('object')}")
+            for entry in data.get("entry", []):
+                for change in entry.get("changes", []):
+                    if change.get("field") == "leadgen":
+                        lead_id = change["value"]["leadgen_id"]
+                        form_id = change["value"]["form_id"]
+                        process_lead(lead_id, form_id)
+                        frappe.log_error(frappe.get_traceback(), f"100 {lead_id} {form_id}")
+    else:
+        frappe.log_error(frappe.get_traceback(), f"7 {signature}")
 
     return "Webhook received"
 
 def verify_signature(payload, signature):
+
+    decode_payload = payload.decode("utf-8")
+    payload = json.loads(decode_payload)
     """
     Verifies the Meta webhook request signature using the app secret.
     """
