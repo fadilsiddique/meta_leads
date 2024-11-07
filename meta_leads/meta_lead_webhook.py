@@ -76,6 +76,8 @@ def verify_signature(payload, signature):
     """
     Verifies the Meta webhook request signature using the app secret.
     """
+
+    frappe.log_error(frappe.get_traceback(), f"101 {payload}")
     if not signature:
         frappe.log_error(frappe.get_traceback(), f"9")
         return False
@@ -96,7 +98,7 @@ def process_lead(lead_id, form_id):
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
-    frappe.log_error(frappe.get_traceback(), f"12 {e}")
+    frappe.log_error(frappe.get_traceback(), f"12 {lead_url}")
 
     try:
         # Fetch lead data from Meta
@@ -126,4 +128,4 @@ def process_lead(lead_id, form_id):
             frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
 
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), f"15 {e}")
+        frappe.log_error(frappe.get_traceback(), f"15")
