@@ -102,17 +102,18 @@ def process_lead(lead_id, form_id):
     """
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
-    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
-    frappe.log_error(frappe.get_traceback(), f"12 {lead_url}")
-
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
+    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
+    frappe.log_error(frappe.get_traceback(), f"12 {lead_url} {requests.get(lead_url, headers=headers,timeout=10)}")
+
+
     response = requests.get(lead_url, headers=headers,timeout=10)
 
     frappe.log_error(frappe.get_traceback(), f"109 {response}")
     frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
-    
+
     try:
         response = requests.get(lead_url, headers=headers, timeout=10)
         frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
