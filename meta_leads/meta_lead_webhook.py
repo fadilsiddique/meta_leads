@@ -71,8 +71,7 @@ def test_handle_meta_lead():
 
 def verify_signature(payload, signature):
 
-    decode_payload = payload.decode("utf-8")
-    payload = json.loads(decode_payload)
+    payload = json.loads(payload)
     """
     Verifies the Meta webhook request signature using the app secret.
     """
