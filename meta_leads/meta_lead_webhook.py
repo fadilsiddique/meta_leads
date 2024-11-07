@@ -83,10 +83,7 @@ def verify_signature(payload, signature):
     try:
         key = META_APP_SECRET.encode("utf-8") if isinstance(META_APP_SECRET, str) else META_APP_SECRET
 
-        if isinstance(payload, dict):
-            msg = json.dumps(payload, separators=(',', ':')).encode("utf-8")
-        else:
-            msg = payload if isinstance(payload, bytes) else payload.encode("utf-8")
+        msg = payload if isinstance(payload, bytes) else payload.encode("utf-8")
 
 
         expected_signature = "sha256=" + hmac.new(
