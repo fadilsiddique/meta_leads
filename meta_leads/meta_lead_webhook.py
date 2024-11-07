@@ -103,33 +103,33 @@ def process_lead(lead_id, form_id):
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
-    frappe.log_error(f"12 Lead URL: {lead_url}")
+    frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
     
     try:
         # Attempt to make the request
         response = requests.get(lead_url)
         
         # Log the response status and content for debugging
-        frappe.log_error(f"99 Response Status: {response.status_code}")
-        frappe.log_error(f"98 Response Content: {response.text}")
+        frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
+        frappe.log_error(frappe.get_traceback(), f"98 Response Content: {response.text}")
 
         # Check if the response is successful and parse JSON
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
+                frappe.log_error(frappe.get_traceback(), f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
             except ValueError as e:
-                frappe.log_error(f"Failed to parse JSON response: {e}", "Meta Lead JSON Error")
+                frappe.log_error(frappe.get_traceback(), f"Failed to parse JSON response: {e}")
                 return
 
             # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-            frappe.log_error(f"Field Data Extracted: {field_data}", "Meta Lead Field Data Parsing")
+            frappe.log_error(frappe.get_traceback(), f"Field Data Extracted: {field_data}")
 
             lead_name = field_data.get("full_name")
             lead_company = field_data.get("company_name")
             lead_phone = field_data.get("phone_number")
-            frappe.log_error(f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone}", "Meta Lead Data")
+            frappe.log_error(frappe.get_traceback(), f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
 
             # Insert the lead into ERPNext CRM if data is complete
             if lead_name and lead_company:
@@ -140,21 +140,21 @@ def process_lead(lead_id, form_id):
                     "phone": lead_phone,
                     "source": "Campaign",
                 })
-                frappe.log_error(f"Prepared Lead Doc: {lead_doc.as_dict()}", "Meta Lead Document Preparation")
+                frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
 
                 try:
                     lead_doc.insert(ignore_permissions=True)
                     frappe.db.commit()
-                    frappe.log_error(f"Lead Document Inserted Successfully: {lead_doc.name}", "Meta Lead Insertion")
+                    frappe.log_error(frappe.get_traceback(), f"Lead Document Inserted Successfully: {lead_doc.name}")
                 except Exception as e:
-                    frappe.log_error(f"Failed to insert Lead Document: {e}", "Meta Lead Insertion Error")
+                    frappe.log_error(frappe.get_traceback(), f"Failed to insert Lead Document: {e}")
             else:
-                frappe.log_error(f"Insufficient lead data: {field_data}", "Meta Lead Data Validation Error")
+                frappe.log_error(frappe.get_traceback(), f"Insufficient lead data: {field_data}")
         else:
             # Log any unexpected status code
-            frappe.log_error(f"Unexpected status code: {response.status_code}, Response: {response.text}", "Meta Lead API Error")
+            frappe.log_error(frappe.get_traceback(), f"Unexpected status code: {response.status_code}, Response: {response.text}")
 
     except requests.exceptions.RequestException as e:
         # Log network or connection errors specifically
-        frappe.log_error(f"Request failed: {e}", "Meta Lead RequestException")
+        frappe.log_error(frappe.get_traceback(), f"Request failed: {e}")
 
