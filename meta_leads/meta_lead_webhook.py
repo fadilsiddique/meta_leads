@@ -104,28 +104,37 @@ def process_lead(lead_id, form_id):
     """
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
     frappe.log_error(frappe.get_traceback(), f"12 {lead_url}")
-    response = requests.get(lead_url)
 
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
-    frappe.log_error(frappe.get_traceback(), f"109 {response}")
-    try:
-        # Fetch lead data from Meta
-        response = requests.get(lead_url, headers=headers,timeout=10)
-        frappe.log_error(frappe.get_traceback(), f"1200 {response}")
-        if response.status_code == 200:
-            frappe.log_error(frappe.get_traceback(), f"14 {response} {response.status_code}")
-            lead_data = response.json()
+    response = requests.get(lead_url, headers=headers,timeout=10)
 
-        # Parse lead information
+    frappe.log_error(frappe.get_traceback(), f"109 {response}")
+    frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
+    
+    try:
+        response = requests.get(lead_url, headers=headers, timeout=10)
+        frappe.log_error(f"Response Status: {response.status_code}, Response Text: {response.text}", "Meta Lead API Response")
+
+        if response.status_code == 200:
+            try:
+                lead_data = response.json()
+                frappe.log_error(f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
+            except ValueError as e:
+                frappe.log_error(f"Failed to parse JSON response: {e}", "Meta Lead JSON Error")
+                return
+
+            # Extract field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
+            frappe.log_error(f"Field Data Extracted: {field_data}", "Meta Lead Field Data Parsing")
+
             lead_name = field_data.get("full_name")
             lead_company = field_data.get("company_name")
             lead_phone = field_data.get("phone_number")
-            frappe.log_error(frappe.get_traceback(), f"18 {field_data}")
+            frappe.log_error(f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone}", "Meta Lead Data")
 
-            # Insert the lead into ERPNext CRM if necessary data is available
+            # Insert the lead into ERPNext CRM if data is complete
             if lead_name and lead_company:
                 lead_doc = frappe.get_doc({
                     "doctype": "CRM Lead",
@@ -134,11 +143,18 @@ def process_lead(lead_id, form_id):
                     "phone": lead_phone,
                     "source": "Campaign",
                 })
-                lead_doc.insert(ignore_permissions=True)
-                frappe.db.commit()
-                frappe.log_error(frappe.get_traceback(), f"13 {lead_doc}")
+                frappe.log_error(f"Prepared Lead Doc: {lead_doc.as_dict()}", "Meta Lead Document Preparation")
+
+                try:
+                    lead_doc.insert(ignore_permissions=True)
+                    frappe.db.commit()
+                    frappe.log_error(f"Lead Document Inserted Successfully: {lead_doc.name}", "Meta Lead Insertion")
+                except Exception as e:
+                    frappe.log_error(f"Failed to insert Lead Document: {e}", "Meta Lead Insertion Error")
             else:
-                frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
+                frappe.log_error(f"Insufficient lead data: {field_data}", "Meta Lead Data Validation Error")
+        else:
+            frappe.log_error(f"Unexpected status code: {response.status_code}", "Meta Lead API Error")
 
     except requests.exceptions.RequestException as e:
-        frappe.log_error(frappe.get_traceback(), f"15 {e}")
+        frappe.log_error(f"Request failed: {e}", "Meta Lead RequestException")
