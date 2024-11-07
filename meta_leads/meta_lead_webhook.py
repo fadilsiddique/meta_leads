@@ -48,70 +48,77 @@ def test_handle_meta_lead():
         frappe.log_error(frappe.get_traceback(), f"5 {data}") 
 
     # Validate the signature
-    # signature = frappe.get_request_header("X-Hub-Signature-256")
-    # if not verify_signature(request_data, signature):
-    #     frappe.throw("Invalid signature")
+    signature = frappe.get_request_header("X-Hub-Signature-256")
+    frappe.log_error(frappe.get_traceback(), f"6 {signature}")
+    if not verify_signature(request_data, signature):
+        frappe.log_error(frappe.get_traceback(), f"7 {signature}")
+        
 
-    # # Process lead data
-    # data = json.loads(request_data)
-    # if data.get("object") == "page":
-    #     for entry in data.get("entry", []):
-    #         for change in entry.get("changes", []):
-    #             if change.get("field") == "leadgen":
-    #                 lead_id = change["value"]["leadgen_id"]
-    #                 form_id = change["value"]["form_id"]
-    #                 process_lead(lead_id, form_id)
+    # Process lead data
+    data = json.loads(request_data)
+    if data.get("object") == "page":
+        frappe.log_error(frappe.get_traceback(), f"8 {data.get('object')}")
+        for entry in data.get("entry", []):
+            for change in entry.get("changes", []):
+                if change.get("field") == "leadgen":
+                    lead_id = change["value"]["leadgen_id"]
+                    form_id = change["value"]["form_id"]
+                    process_lead(lead_id, form_id)
 
     return "Webhook received"
 
-# def verify_signature(payload, signature):
-#     """
-#     Verifies the Meta webhook request signature using the app secret.
-#     """
-#     if not signature:
-#         return False
-#     try:
-#         expected_signature = "sha256=" + hmac.new(
-#             key=META_APP_SECRET.encode("utf-8"),
-#             msg=payload,
-#             digestmod=hashlib.sha256
-#         ).hexdigest()
-#         return hmac.compare_digest(expected_signature, signature)
-#     except Exception as e:
-#         frappe.log_error(message=str(e), title="Meta Webhook Signature Error")
-#         return False
+def verify_signature(payload, signature):
+    """
+    Verifies the Meta webhook request signature using the app secret.
+    """
+    if not signature:
+        frappe.log_error(frappe.get_traceback(), f"9")
+        return False
+    try:
+        expected_signature = "sha256=" + hmac.new(
+            key=META_APP_SECRET.encode("utf-8"),
+            msg=payload,
+            digestmod=hashlib.sha256
+        ).hexdigest()
+        frappe.log_error(frappe.get_traceback(), f"10 {payload}")
+        return hmac.compare_digest(expected_signature, signature)
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), f"11 {e}")
+        return False
 
-# def process_lead(lead_id, form_id):
-#     """
-#     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
-#     """
-#     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
+def process_lead(lead_id, form_id):
+    """
+    Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
+    """
+    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
+    frappe.log_error(frappe.get_traceback(), f"12 {e}")
 
-#     try:
-#         # Fetch lead data from Meta
-#         response = frappe.session.get(lead_url)
-#         lead_data = response.json()
+    try:
+        # Fetch lead data from Meta
+        response = frappe.session.get(lead_url)
+        lead_data = response.json()
 
-#         # Parse lead information
-#         field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-#         lead_name = field_data.get("full_name")
-#         lead_company = field_data.get("company_name")
-#         lead_phone = field_data.get("phone_number")
+        # Parse lead information
+        field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
+        lead_name = field_data.get("full_name")
+        lead_company = field_data.get("company_name")
+        lead_phone = field_data.get("phone_number")
+        frappe.log_error(frappe.get_traceback(), f"18 {field_data}")
 
-#         # Insert the lead into ERPNext CRM if necessary data is available
-#         if lead_name and lead_company:
-#             lead_doc = frappe.get_doc({
-#                 "doctype": "CRM Lead",
-#                 "first_name": lead_name,
-#                 "middle_name": lead_company,
-#                 "phone": lead_phone,
-#                 "source": "Campaign",
-#             })
-#             lead_doc.insert(ignore_permissions=True)
-#             frappe.db.commit()
-#             frappe.logger().info(f"Lead created successfully: {lead_doc.name}")
-#         else:
-#             frappe.logger().warning("Lead data incomplete. Missing name or email.")
+        # Insert the lead into ERPNext CRM if necessary data is available
+        if lead_name and lead_company:
+            lead_doc = frappe.get_doc({
+                "doctype": "CRM Lead",
+                "first_name": lead_name,
+                "middle_name": lead_company,
+                "phone": lead_phone,
+                "source": "Campaign",
+            })
+            lead_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+            frappe.log_error(frappe.get_traceback(), f"13 {lead_doc}")
+        else:
+            frappe.log_error(frappe.get_traceback(), f"14 {field_data}")
 
-#     except Exception as e:
-#         frappe.log_error(message=str(e), title="Meta Lead Processing Error")
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), f"15 {e}")
