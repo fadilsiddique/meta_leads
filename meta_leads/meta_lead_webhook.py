@@ -115,7 +115,7 @@ def process_lead(lead_id, form_id):
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
     frappe.log_error( f"99 Response Status:")
-    frappe.log_error(f"98 Response Content:)
+    frappe.log_error(f"98 Response Content:")
     
     try:
 
@@ -162,4 +162,3 @@ def process_lead(lead_id, form_id):
     except requests.exceptions.RequestException as e:
         # Log network or connection errors specifically
         frappe.log_error(f"Request failed: {e}")
-
