@@ -114,17 +114,17 @@ def process_lead(lead_id, form_id):
     frappe.log_error(frappe.get_traceback(), f"13 Making API request to Meta")
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
-    frappe.log_error(frappe.get_traceback(), f"99 Response Status:")
-    frappe.log_error(frappe.get_traceback(), f"98 Response Content: {response.text}")
+    frappe.log_error( f"99 Response Status:")
+    frappe.log_error(f"98 Response Content: {response.text}")
     
     try:
 
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(frappe.get_traceback(), f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
+                frappe.log_error(f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
             except ValueError as e:
-                frappe.log_error(frappe.get_traceback(), f"Failed to parse JSON response: {e}")
+                frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
 
             # Extract and log field data
@@ -157,9 +157,9 @@ def process_lead(lead_id, form_id):
             #     frappe.log_error(frappe.get_traceback(), f"Insufficient lead data: {field_data}")
         else:
             # Log any unexpected status code
-            frappe.log_error(frappe.get_traceback(), f"Unexpected status code: {response.status_code}, Response: {response.text}")
+            frappe.log_error(f"Unexpected status code: {response.status_code}, Response: {response.text}")
 
     except requests.exceptions.RequestException as e:
         # Log network or connection errors specifically
-        frappe.log_error(frappe.get_traceback(), f"Request failed: {e}")
+        frappe.log_error(f"Request failed: {e}")
 
