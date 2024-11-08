@@ -105,7 +105,7 @@ def process_lead(lead_id, form_id):
         "Content-Type": "application/json"
     }
     frappe.log_error(frappe.get_traceback(), f"13 Making API request to Meta")
-    response = requests.request("GET", lead_url, headers=headers, data=payload)
+    response = requests.request("GET", lead_url, headers=headers, data=payload, timeout=10)
 
     frappe.log_error( f"99 Response Status:")
     log_request = frappe.get_doc({
@@ -134,7 +134,7 @@ def process_lead(lead_id, form_id):
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data:  {response.status_code}")
+                frappe.log_error(f"Parsed Lead Data:  {response.status_code}", {lead_data})
             except ValueError as e:
                 frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
@@ -145,7 +145,7 @@ def process_lead(lead_id, form_id):
             log_request = frappe.get_doc({
                 "doctype": "Note",
                 "title": "Field Data",
-                "content": field_data,
+                "content": json.dumps(field_data),
                 "public":1
             })
             log_request.insert(ignore_permissions=True)
