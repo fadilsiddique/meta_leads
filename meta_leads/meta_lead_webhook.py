@@ -110,13 +110,13 @@ def process_lead(lead_id, form_id):
     frappe.log_error( f"99 Response Status:")
     log_request = frappe.get_doc({
         "doctype": "Note",
-        "title": "Meta Webhook Request",
+        "title": "Meta Webhook Bros",
         "content": response.text,
         "public":1
     })
     log_request.insert(ignore_permissions=True)
     frappe.db.commit()
-    frappe.log_error(f"98 Response Content:")
+    frappe.log_error(f"98 Response Content: {response}")
     
     try:
 
