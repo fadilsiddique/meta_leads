@@ -115,14 +115,14 @@ def process_lead(lead_id, form_id):
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
     frappe.log_error( f"99 Response Status:")
-    frappe.log_error(f"98 Response Content: {response.text}")
+    frappe.log_error(f"98 Response Content:)
     
     try:
 
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data: {lead_data}", "Meta Lead JSON Parsing")
+                frappe.log_error(f"Parsed Lead Data:", )
             except ValueError as e:
                 frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
