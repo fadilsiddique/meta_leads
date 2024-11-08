@@ -13,6 +13,8 @@ URL = meta_settings.get("url")
 VERSION = meta_settings.get("version")
 ACCESS_TOKEN = meta_settings.get_password("access_token")
 
+frappe.log_error(frappe.get_traceback(), f"007 {META_APP_SECRET}")
+
 @frappe.whitelist(allow_guest=True)
 def test_handle_meta_lead():
     params = frappe.local.form_dict
@@ -112,9 +114,8 @@ def process_lead(lead_id, form_id):
     frappe.log_error(frappe.get_traceback(), f"13 Making API request to Meta")
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
-    frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
+    frappe.log_error(frappe.get_traceback(), f"99 Response Status:")
     frappe.log_error(frappe.get_traceback(), f"98 Response Content: {response.text}")
-
     
     try:
 
@@ -127,33 +128,33 @@ def process_lead(lead_id, form_id):
                 return
 
             # Extract and log field data
-            field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-            frappe.log_error(frappe.get_traceback(), f"Field Data Extracted: {field_data}")
+            # field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
+            # frappe.log_error(frappe.get_traceback(), f"Field Data Extracted: {field_data}")
 
-            lead_name = field_data.get("full_name")
-            lead_company = field_data.get("company_name")
-            lead_phone = field_data.get("phone_number")
-            frappe.log_error(frappe.get_traceback(), f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
+            # lead_name = field_data.get("full_name")
+            # lead_company = field_data.get("company_name")
+            # lead_phone = field_data.get("phone_number")
+            # frappe.log_error(frappe.get_traceback(), f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
 
             # Insert the lead into ERPNext CRM if data is complete
-            if lead_name and lead_company:
-                lead_doc = frappe.get_doc({
-                    "doctype": "CRM Lead",
-                    "first_name": lead_name,
-                    "middle_name": lead_company,
-                    "phone": lead_phone,
-                    "source": "Campaign",
-                })
-                frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
+            # if lead_name and lead_company:
+            #     lead_doc = frappe.get_doc({
+            #         "doctype": "CRM Lead",
+            #         "first_name": lead_name,
+            #         "middle_name": lead_company,
+            #         "phone": lead_phone,
+            #         "source": "Campaign",
+            #     })
+            #     frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
 
-                try:
-                    lead_doc.insert(ignore_permissions=True)
-                    frappe.db.commit()
-                    frappe.log_error(frappe.get_traceback(), f"Lead Document Inserted Successfully: {lead_doc.name}")
-                except Exception as e:
-                    frappe.log_error(frappe.get_traceback(), f"Failed to insert Lead Document: {e}")
-            else:
-                frappe.log_error(frappe.get_traceback(), f"Insufficient lead data: {field_data}")
+            #     try:
+            #         lead_doc.insert(ignore_permissions=True)
+            #         frappe.db.commit()
+            #         frappe.log_error(frappe.get_traceback(), f"Lead Document Inserted Successfully: {lead_doc.name}")
+            #     except Exception as e:
+            #         frappe.log_error(frappe.get_traceback(), f"Failed to insert Lead Document: {e}")
+            # else:
+            #     frappe.log_error(frappe.get_traceback(), f"Insufficient lead data: {field_data}")
         else:
             # Log any unexpected status code
             frappe.log_error(frappe.get_traceback(), f"Unexpected status code: {response.status_code}, Response: {response.text}")
