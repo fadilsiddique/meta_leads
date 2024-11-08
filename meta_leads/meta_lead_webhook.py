@@ -106,16 +106,14 @@ def process_lead(lead_id, form_id):
     frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
     payload ={}
     headers = {}
+    response = requests.request("GET", lead_url, headers=headers, data=payload)
+
+    frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
+    frappe.log_error(frappe.get_traceback(), f"98 Response Content: {response.text}")
+
     
     try:
-        # Attempt to make the request
-        response = requests.request("GET", lead_url, headers=headers, data=payload)
-        
-        # Log the response status and content for debugging
-        frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
-        frappe.log_error(frappe.get_traceback(), f"98 Response Content: {response.text}")
 
-        # Check if the response is successful and parse JSON
         if response.status_code == 200:
             try:
                 lead_data = response.json()
