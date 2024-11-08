@@ -105,7 +105,11 @@ def process_lead(lead_id, form_id):
     lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
     frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
     payload ={}
-    headers = {}
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    frappe.log_error(frappe.get_traceback(), f"13 Making API request to Meta")
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
     frappe.log_error(frappe.get_traceback(), f"99 Response Status: {response.status_code}")
