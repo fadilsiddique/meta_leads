@@ -119,6 +119,10 @@ def process_lead(lead_id, form_id):
     frappe.log_error(f"98 Response Content: {response}")
     frappe.log_error(f"098", {json.dumps(response.json())})
 
+    check_type=type(response.json())
+
+    frappe.log_error(f"098090", {check_type})
+
     log_request = frappe.get_doc({
         "doctype": "Note",
         "title": "JSON WEBHOOK RES",
@@ -141,11 +145,11 @@ def process_lead(lead_id, form_id):
 
             # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-            frappe.log_error(f"Parsed Lead Data: {response.status_code} - Data: {json.dumps(lead_data)}", "Meta Lead JSON Parsing")
+            # frappe.log_error(f"1001 Parsed Lead Data: {response.status_code} - Data: {json.dumps(lead_data)}", "Meta Lead JSON Parsing")
             log_request = frappe.get_doc({
                 "doctype": "Note",
                 "title": "Field Data",
-                "content": json.dumps(field_data),
+                "content": str(field_data),
                 "public":1
             })
             log_request.insert(ignore_permissions=True)
