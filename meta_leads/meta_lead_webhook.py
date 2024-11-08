@@ -33,14 +33,7 @@ def test_handle_meta_lead():
 
                 # Attempt to create a Note and log it
                 return Response(params["hub.challenge"], mimetype="text/plain", status=200)
-        log_request = frappe.get_doc({
-            "doctype": "Note",
-            "title": "Meta Webhook Request",
-            "content": "Webhook test note",
-            "public":1
-        })
-        log_request.insert(ignore_permissions=True)
-        frappe.db.commit()
+
 
         frappe.log_error(frappe.get_traceback(), f"3 {data}")
             
@@ -115,6 +108,14 @@ def process_lead(lead_id, form_id):
     response = requests.request("GET", lead_url, headers=headers, data=payload)
 
     frappe.log_error( f"99 Response Status:")
+    log_request = frappe.get_doc({
+        "doctype": "Note",
+        "title": "Meta Webhook Request",
+        "content": response.text,
+        "public":1
+    })
+    log_request.insert(ignore_permissions=True)
+    frappe.db.commit()
     frappe.log_error(f"98 Response Content:")
     
     try:
