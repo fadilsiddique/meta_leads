@@ -167,16 +167,15 @@ def process_lead(lead_id, form_id):
                 lead_doc = frappe.get_doc({
                     "doctype": "CRM Lead",
                     "first_name": lead_name,
-                    "middle_name": lead_company,
-                    "phone": lead_phone,
+                    "last_name": lead_company,
                     "source": "Campaign",
                 })
-                frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
+                # frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
 
                 try:
                     lead_doc.insert(ignore_permissions=True)
                     frappe.db.commit()
-                    frappe.log_error(frappe.get_traceback(), f"Lead Document Inserted Successfully: {lead_doc.name}")
+                    frappe.log_error(f"q000099Lead Document Inserted Successfully")
                 except Exception as e:
                     frappe.log_error(frappe.get_traceback(), f"Failed to insert Lead Document: {e}")
             else:
