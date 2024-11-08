@@ -117,12 +117,12 @@ def process_lead(lead_id, form_id):
     log_request.insert(ignore_permissions=True)
     frappe.db.commit()
     frappe.log_error(f"98 Response Content: {response}")
-    frappe.log_error(f"098", {response.json()})
+    frappe.log_error(f"098", {json.dumps(response.json())})
 
     log_request = frappe.get_doc({
         "doctype": "Note",
         "title": "JSON WEBHOOK RES",
-        "content": response.json(),
+        "content": str(response.json()),
         "public":1
     })
     log_request.insert(ignore_permissions=True)
