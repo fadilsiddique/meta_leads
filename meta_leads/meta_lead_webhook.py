@@ -13,7 +13,7 @@ URL = meta_settings.get("url")
 VERSION = meta_settings.get("version")
 ACCESS_TOKEN = meta_settings.get_password("access_token")
 
-frappe.log_error(frappe.get_traceback(), f"007 {META_APP_SECRET}")
+frappe.log_error(frappe.get_traceback(), f"007 {ACCESS_TOKEN}")
 
 @frappe.whitelist(allow_guest=True)
 def test_handle_meta_lead():
