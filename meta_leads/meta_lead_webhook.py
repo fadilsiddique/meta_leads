@@ -123,19 +123,29 @@ def process_lead(lead_id, form_id):
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data:", )
+                frappe.log_error(f"Parsed Lead Data:  {lead_data}")
             except ValueError as e:
                 frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
 
             # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-            frappe.log_error(frappe.get_traceback(), f"Field Data Extracted: {field_data}")
+            frappe.log_error(f"Field Data Extracted: {field_data}")
+            log_request = frappe.get_doc({
+                "doctype": "Note",
+                "title": "Field Data",
+                "content": field_data,
+                "public":1
+            })
+            log_request.insert(ignore_permissions=True)
+            frappe.db.commit()
+            frappe.log_error(f"Note created on field")
+
 
             lead_name = field_data.get("full_name")
             lead_company = field_data.get("company_name")
             lead_phone = field_data.get("phone_number")
-            frappe.log_error(frappe.get_traceback(), f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
+            frappe.log_error(f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
 
             # Insert the lead into ERPNext CRM if data is complete
             if lead_name and lead_company:
