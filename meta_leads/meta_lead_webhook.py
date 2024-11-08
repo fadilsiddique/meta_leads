@@ -104,7 +104,7 @@ def process_lead(lead_id, form_id):
     """
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
-    lead_url = f"{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
+    lead_url = f"https://{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
     frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
     payload ={}
     headers = {
