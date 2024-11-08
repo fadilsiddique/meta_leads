@@ -111,19 +111,30 @@ def process_lead(lead_id, form_id):
     log_request = frappe.get_doc({
         "doctype": "Note",
         "title": "Meta Webhook Bros",
-        "content": response,
+        "content": response.text,
         "public":1
     })
     log_request.insert(ignore_permissions=True)
     frappe.db.commit()
     frappe.log_error(f"98 Response Content: {response}")
+    frappe.log_error(f"098", {response.json()})
+
+    log_request = frappe.get_doc({
+        "doctype": "Note",
+        "title": "JSON WEBHOOK RES",
+        "content": response.json(),
+        "public":1
+    })
+    log_request.insert(ignore_permissions=True)
+    frappe.db.commit()
+    
     
     try:
 
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data:  {lead_data}")
+                frappe.log_error(f"Parsed Lead Data:  {response.status_code}")
             except ValueError as e:
                 frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
