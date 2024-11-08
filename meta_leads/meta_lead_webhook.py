@@ -134,14 +134,14 @@ def process_lead(lead_id, form_id):
         if response.status_code == 200:
             try:
                 lead_data = response.json()
-                frappe.log_error(f"Parsed Lead Data:  {response.status_code}", {lead_data})
+                frappe.log_error(f"Parsed Lead Data:  {response.status_code}")
             except ValueError as e:
                 frappe.log_error(f"Failed to parse JSON response: {e}")
                 return
 
             # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
-            frappe.log_error(f"Field Data Extracted: {field_data}")
+            frappe.log_error(f"Parsed Lead Data: {response.status_code} - Data: {json.dumps(lead_data)}", "Meta Lead JSON Parsing")
             log_request = frappe.get_doc({
                 "doctype": "Note",
                 "title": "Field Data",
