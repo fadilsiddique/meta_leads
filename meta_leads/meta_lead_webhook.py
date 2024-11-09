@@ -160,13 +160,13 @@ def process_lead(lead_id, form_id):
             lead_name = field_data.get("full_name")
             lead_company = field_data.get("company_name")
             lead_phone = field_data.get("phone_number")
-            frappe.log_error(f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
+            # frappe.log_error(f"Lead Name: {lead_name}, Lead Company: {lead_company}, Lead Phone: {lead_phone} Meta Lead Data")
 
             # Insert the lead into ERPNext CRM if data is complete
             if lead_name and lead_company:
                 lead_doc = frappe.get_doc({
                     "doctype": "CRM Lead",
-                    "first_name": lead_name,
+                    "first_name": "Rizwan Sajan",
                     "last_name": lead_company,
                     "source": "Campaign",
                 })
