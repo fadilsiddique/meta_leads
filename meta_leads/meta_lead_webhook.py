@@ -98,7 +98,7 @@ def process_lead(lead_id, form_id):
     Fetches lead details from Meta Graph API and creates a Lead in ERPNext CRM.
     """
     lead_url = f"https://{URL}/{VERSION}/{lead_id}?access_token={ACCESS_TOKEN}"
-    frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
+    # frappe.log_error(frappe.get_traceback(), f"12 Lead URL: {lead_url}")
     payload ={}
     headers = {
         "Accept": "application/json",
@@ -107,30 +107,30 @@ def process_lead(lead_id, form_id):
     # frappe.log_error(frappe.get_traceback(), f"13 Making API request to Meta")
     response = requests.request("GET", lead_url, headers=headers, data=payload, timeout=10)
 
-    frappe.log_error( f"99 Response Status:")
-    log_request = frappe.get_doc({
-        "doctype": "Note",
-        "title": "Meta Webhook Bros",
-        "content": response.text,
-        "public":1
-    })
-    log_request.insert(ignore_permissions=True)
-    frappe.db.commit()
+    # frappe.log_error( f"99 Response Status:")
+    # log_request = frappe.get_doc({
+    #     "doctype": "Note",
+    #     "title": "Meta Webhook Bros",
+    #     "content": response.text,
+    #     "public":1
+    # })
+    # log_request.insert(ignore_permissions=True)
+    # frappe.db.commit()
     # frappe.log_error(f"98 Response Content: {response}")
     # frappe.log_error(f"098", {json.dumps(response.json())})
 
-    check_type=type(response.json())
+    # check_type=type(response.json())
 
     # frappe.log_error(f"098090", {check_type})
 
-    log_request = frappe.get_doc({
-        "doctype": "Note",
-        "title": "JSON WEBHOOK RES",
-        "content": str(response.json()),
-        "public":1
-    })
-    log_request.insert(ignore_permissions=True)
-    frappe.db.commit()
+    # log_request = frappe.get_doc({
+    #     "doctype": "Note",
+    #     "title": "JSON WEBHOOK RES",
+    #     "content": str(response.json()),
+    #     "public":1
+    # })
+    # log_request.insert(ignore_permissions=True)
+    # frappe.db.commit()
     
     
     try:
@@ -146,15 +146,15 @@ def process_lead(lead_id, form_id):
             # Extract and log field data
             field_data = {field["name"]: field["values"][0] for field in lead_data.get("field_data", [])}
             # frappe.log_error(f"1001 Parsed Lead Data: {response.status_code} - Data: {json.dumps(lead_data)}", "Meta Lead JSON Parsing")
-            log_request = frappe.get_doc({
-                "doctype": "Note",
-                "title": "Field Data",
-                "content": str(field_data),
-                "public":1
-            })
-            log_request.insert(ignore_permissions=True)
-            frappe.db.commit()
-            frappe.log_error(f"Note created on field")
+            # log_request = frappe.get_doc({
+            #     "doctype": "Note",
+            #     "title": "Field Data",
+            #     "content": str(field_data),
+            #     "public":1
+            # })
+            # log_request.insert(ignore_permissions=True)
+            # frappe.db.commit()
+            # frappe.log_error(f"Note created on field")
 
 
             lead_name = field_data.get("full_name").replace(">","")
@@ -168,14 +168,15 @@ def process_lead(lead_id, form_id):
                     "doctype": "CRM Lead",
                     "first_name": lead_name,
                     "last_name": lead_company,
-                    "source": "Campaign",
+                    "custom_meta_id": lead_id,
+                    "source": "Meta ads",
                 })
                 # frappe.log_error(frappe.get_traceback(), f"Prepared Lead Doc: {lead_doc.as_dict()}")
 
                 try:
                     lead_doc.insert(ignore_permissions=True)
                     frappe.db.commit()
-                    frappe.log_error(f"q000099Lead Document Inserted Successfully")
+                    # frappe.log_error(f"Lead Document Inserted Successfully")
                 except Exception as e:
                     frappe.log_error(frappe.get_traceback(), f"Failed to insert Lead Document: {e}")
             else:
