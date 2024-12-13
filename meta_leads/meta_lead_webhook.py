@@ -168,6 +168,7 @@ def process_lead(lead_id, form_id):
                     "doctype": "CRM Lead",
                     "first_name": lead_name,
                     "last_name": lead_company,
+                    "mobile_no": lead_phone,
                     "custom_meta_id": lead_id,
                     "source": "Meta ads",
                 })
